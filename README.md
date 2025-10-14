@@ -1,39 +1,52 @@
-# NetSuite MCP Proxy (OAuth2) — EasyPanel Ready
+# 🧩 NetSuite MCP Proxy (OAuth2) — EasyPanel Ready
 
-Proxy delgado que:
-- Expone un **MCP endpoint** consumible por OpenAI / AnythingLLM (SSE + HTTP).
-- Realiza **OAuth2 Authorization Code** con NetSuite AI Connector Service.
-- Administra **access_token / refresh_token** y renueva automáticamente.
-- Reenvía `tools.list` / `tools.call` y el **stream SSE** hacia el MCP oficial de NetSuite.
+Proxy delgado que permite conectar **AnythingLLM** o **OpenAI (Playground / Connectors)** con **NetSuite AI Connector (MCP)** usando **OAuth2 Authorization Code**.  
+Autentica una sola vez y mantiene los tokens activos automáticamente.
 
-## Endpoints
-- `GET  /health`            → OK si el proxy está vivo.
-- `GET  /oauth/start`       → Inicia el login (redirige a NetSuite).
-- `GET  /oauth/callback`    → Recibe `code` y guarda tokens.
-- `GET  /sse`               → Pipea el stream SSE de NetSuite MCP al cliente.
-- `POST /tools/list`        → Proxy a NetSuite MCP tools/list.
-- `POST /tools/call`        → Proxy a NetSuite MCP tools/call.
+---
 
-> **Nota**: Debes completar el flujo `/oauth/start` una vez (en navegador) para almacenar tokens.
+## ✨ Características
 
-## Variables de entorno (.env)
+- ✅ Compatible con **OAuth2 Authorization Code Grant** (Integration Record tipo *Public Client*).
+- ✅ Administra `access_token` y `refresh_token` automáticamente.
+- ✅ Expone endpoints MCP estándar: `/sse`, `/tools/list`, `/tools/call`.
+- ✅ Listo para instalar en **EasyPanel** con variables de entorno.
+- ✅ Puede ser usado desde AnythingLLM o el Playground de OpenAI como **MCP Server**.
+
+---
+
+## ⚙️ Endpoints disponibles
+
+| Endpoint | Método | Descripción |
+|-----------|---------|-------------|
+| `/health` | GET | Verifica que el proxy esté en ejecución |
+| `/oauth/start` | GET | Inicia el login con NetSuite |
+| `/oauth/callback` | GET | Recibe el código OAuth2 y guarda los tokens |
+| `/sse` | GET | Pipea el stream SSE del MCP oficial de NetSuite |
+| `/tools/list` | POST | Lista las tools disponibles |
+| `/tools/call` | POST | Ejecuta una tool en NetSuite |
+
+---
+
+## 🔧 Variables de entorno (configurar en EasyPanel)
+
 ```env
-# Identidad/URLs NetSuite
+# --- NetSuite / Región ---
 NS_ACCOUNT_ID=123456
 NS_REGION_HOST_APP=app.netsuite.com
 NS_REGION_HOST_API=suitetalk.api.netsuite.com
 
-# OAuth2 (Integration Record como Public Client + Authorization Code)
-OAUTH_CLIENT_ID=xxxxx
-OAUTH_CLIENT_SECRET=yyyyy
+# --- OAuth2 ---
+OAUTH_CLIENT_ID=__REPLACE__
+OAUTH_CLIENT_SECRET=__REPLACE__
 OAUTH_REDIRECT_URI=https://TU-DOMINIO/oauth/callback
-OAUTH_SCOPES=openid offline_access ai_connector.mcp # ajusta con tus scopes
+OAUTH_SCOPES=openid offline_access ai_connector.mcp
 
-# Objetivo MCP (elige uno)
-MCP_TARGET_KIND=all       # all | suiteapp
+# --- Objetivo MCP ---
+MCP_TARGET_KIND=all
 MCP_SUITEAPP_ID=com.netsuite.mcpstandardtools
 
-# Servidor
+# --- Servidor ---
 PORT=8011
-SESSION_SECRET=cadena-super-secreta
+SESSION_SECRET=change-me
 TOKEN_FILE=./tokens.json
