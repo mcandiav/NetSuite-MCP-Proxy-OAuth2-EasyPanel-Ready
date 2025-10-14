@@ -2,15 +2,15 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copia dependencias y las instala
-COPY package*.json ./
-RUN npm ci --omit=dev
+# Copia manifest e instala dependencias SIN lockfile
+COPY package.json ./
+RUN npm install --omit=dev
 
 # Copia el resto del código
 COPY . .
 
-# Expone el puerto estándar del proxy
+# Puerto del proxy
 EXPOSE 8011
 
-# Comando de inicio
+# Inicio
 CMD ["node", "server.js"]
