@@ -1,0 +1,16 @@
+{
+  "name": "netsuite-mcp-proxy",
+  "version": "1.0.0",
+  "description": "OAuth2 MCP proxy for NetSuite (SSE + tools passthrough) — EasyPanel ready",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "cookie-session": "2.0.0",
+    "express": "4.19.2",
+    "node-fetch": "3.3.2"
+  }
+}
